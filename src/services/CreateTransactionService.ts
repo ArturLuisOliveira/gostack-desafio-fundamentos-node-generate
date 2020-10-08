@@ -8,8 +8,20 @@ class CreateTransactionService {
     this.transactionsRepository = transactionsRepository;
   }
 
-  public execute(): Transaction {
+  public execute({ title, value, type }: Omit<Transaction, 'id'>): Transaction {
     // TODO
+    const balance = this.transactionsRepository.getBalance();
+
+    if (type === 'outcome' && value > balance.total)
+      throw Error('Saldo insuficiente');
+
+    const transaction = this.transactionsRepository.create({
+      title,
+      value,
+      type,
+    });
+
+    return transaction;
   }
 }
 
